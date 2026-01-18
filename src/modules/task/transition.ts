@@ -77,9 +77,10 @@ export async function transition(
     // Read current task
     const content = await readFile(filePath, 'utf8');
     const { data, content: body } = matter(content);
-    const frontmatter = data as TaskFrontmatter;
+    const frontmatter = data as TaskFrontmatter & { state?: TaskState };
 
-    const currentState = frontmatter.current_state;
+    // Support both 'current_state' and 'state' field names
+    const currentState = frontmatter.current_state || frontmatter.state || TaskState.WATCH;
     const targetState = getNextState(currentState, frontmatter.requires_approval);
 
     if (!targetState) {

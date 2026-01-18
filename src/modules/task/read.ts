@@ -11,14 +11,14 @@ import { TaskNotFoundError } from '../../lib/errors.js';
  */
 function parseTask(content: string): Task {
   const { data, content: body } = matter(content);
-  const frontmatter = data as TaskFrontmatter;
+  const frontmatter = data as TaskFrontmatter & { state?: TaskState; created?: string };
 
   return {
     id: frontmatter.id,
     title: frontmatter.title || 'Untitled',
     source: frontmatter.source || TaskSource.MANUAL,
-    created_at: frontmatter.created_at || new Date().toISOString(),
-    current_state: frontmatter.current_state || TaskState.WATCH,
+    created_at: frontmatter.created_at || frontmatter.created || new Date().toISOString(),
+    current_state: frontmatter.current_state || frontmatter.state || TaskState.WATCH,
     priority: frontmatter.priority || Priority.NORMAL,
     requires_approval: frontmatter.requires_approval ?? false,
     plan_path: frontmatter.plan_path,
@@ -49,12 +49,16 @@ async function findTaskFile(
     try {
       const files = await readdir(dir);
       for (const file of files) {
-        if (file.endsWith('.md') && file.includes(id.slice(0, 8))) {
+        if (file.endsWith('.md')) {
           const filePath = join(dir, file);
-          const content = await readFile(filePath, 'utf8');
-          const { data } = matter(content);
-          if (data.id === id) {
-            return filePath;
+          try {
+            const content = await readFile(filePath, 'utf8');
+            const { data } = matter(content);
+            if (data.id === id) {
+              return filePath;
+            }
+          } catch {
+            // Skip files that can't be read
           }
         }
       }

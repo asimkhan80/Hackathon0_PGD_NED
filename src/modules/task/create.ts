@@ -175,17 +175,20 @@ export async function createFromFile(
     return newTask;
   }
 
+  // Support both 'current_state' and 'state' field names
+  const fm = frontmatter as TaskFrontmatter & { state?: TaskState; created?: string };
+
   return {
-    id: frontmatter.id,
-    title: frontmatter.title || extractTitle(body),
-    source: frontmatter.source || TaskSource.MANUAL,
-    created_at: frontmatter.created_at || new Date().toISOString(),
-    current_state: frontmatter.current_state || TaskState.WATCH,
-    priority: frontmatter.priority || Priority.NORMAL,
-    requires_approval: frontmatter.requires_approval ?? false,
-    plan_path: frontmatter.plan_path,
-    error_count: frontmatter.error_count,
-    last_error: frontmatter.last_error,
+    id: fm.id,
+    title: fm.title || extractTitle(body),
+    source: fm.source || TaskSource.MANUAL,
+    created_at: fm.created_at || fm.created || new Date().toISOString(),
+    current_state: fm.current_state || fm.state || TaskState.WATCH,
+    priority: fm.priority || Priority.NORMAL,
+    requires_approval: fm.requires_approval ?? false,
+    plan_path: fm.plan_path,
+    error_count: fm.error_count,
+    last_error: fm.last_error,
     raw_content: body,
   };
 }
