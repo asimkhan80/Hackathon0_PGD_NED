@@ -1,0 +1,53 @@
+{
+  "name": "digital-fte-core",
+  "version": "0.1.0",
+  "description": "Digital FTE Cognitive Loop Core - File-based autonomous agent infrastructure",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "digital-fte": "dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/cli/index.ts start",
+    "start:pm2": "pm2 start ecosystem.config.cjs",
+    "stop": "pm2 stop digital-fte",
+    "vault:init": "tsx src/cli/index.ts init",
+    "vault:status": "tsx src/cli/index.ts status",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "digital-fte",
+    "autonomous-agent",
+    "cognitive-loop",
+    "obsidian",
+    "vault"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "commander": "^12.1.0",
+    "gray-matter": "^4.0.3",
+    "pino": "^9.14.0",
+    "proper-lockfile": "^4.1.2",
+    "remark": "^15.0.1",
+    "uuid": "^9.0.1",
+    "xstate": "^5.25.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.30",
+    "@types/proper-lockfile": "^4.1.4",
+    "@types/uuid": "^10.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  }
+}
